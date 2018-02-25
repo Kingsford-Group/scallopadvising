@@ -26,3 +26,31 @@ An example of the full command is
 ```
 ./ScallopAdvising.pl --working_dir temp/ --input_bam in.bam --output_gtf out.gtf --reference ref.gtf default.config config1.config
 ```
+
+
+## config files
+
+The configuration files are flat files on which each line contains one tunable parameter and its corresponding value.
+Non-specified tunable parameters retain the default value.
+
+An example of the default parameter configuration would be:
+```
+max_dp_table_size                   10000
+max_edit_distance                   10
+max_intron_contamination_coverage   2.0
+max_num_exons                       1000
+min_bundle_gap                      50
+min_exon_length                     20
+min_flank_length                    3
+min_mapping_quality                 1
+min_num_hits_in_bundle              20
+min_router_count                    1
+min_splice_boundary_hits            1
+min_subregion_gap                   3
+min_subregion_length                15
+min_subregion_overlap               1.5
+min_transcript_length_base          150
+min_transcript_length_increase      50
+uniquely_mapped_only                0
+use_second_alignment                0
+```
