@@ -1,6 +1,6 @@
 # Scallop Parameter Advising
 
-This repo contains a wrapper for the [Scallop](http://github.com/Kingsford-Group/scallop) transcriptome assembly tool. 
+This repo contains a wrapper for the [Scallop](http://github.com/Kingsford-Group/scallop) transcriptome assembly tool.
 
 ## installation
 
@@ -9,24 +9,20 @@ The wrapper is written in perl but requires an installation of the following app
 * [gffcompare](https://github.com/gpertea/gffcompare)
 * [rnaseqtools](https://github.com/Kingsford-Group/rnaseqtools)
 
+If `scallop`, `gffcompare` and `gtfcuff` are not in your path they can be specified on the command line using the flags
+`--scallop_path`, `-gffcompare_path` and `--gtfcuff_path` respectively.
 
-Within ScallopAdvising.pl the the first 3 lines should be updated to reflect the applications location. 
+
+## usage
+
+The script `ScallopAdvising.pl` requires that the following options be given:
+* `--working_dir` -- a folder in which temporary files will be stored
+* `--input_bam` -- the mapping of RNA-seq reads to the reference *genome*
+* `--output_gtf` -- the output file
+* `--reference` -- the reference transcriptome corresponding to the reference genome used
+
+Then a list of configuration files should be supplied (as described below).
+An example of the full command is
 ```
-my $scallop_path = "";
-my $gffcompare_path = "";
-my $gtfcuff_path = "";
+./ScallopAdvising.pl --working_dir temp/ --input_bam in.bam --output_gtf out.gtf --reference ref.gtf default.config config1.config
 ```
-
-
-## useage 
-
-To use the script you will need to provide 3 command line parameters
-
-```
-./ScallopAdvising.pl <input_bam> <reference_gtf> <output_directory>
-```
-
-where 
-* <input_bam> is an alignment of the RNA-seq reads to the reference *genome*,
-* <reference_gtf> is the reference transcriptome in GTF format, and 
-* <output_directory> is the path to a directory that will be used to store temporary files as well as the final transcriptome (as final.gtf)
