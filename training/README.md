@@ -11,11 +11,11 @@ This directory contains 4 (groups of) scripts used to to generate advisor sets.
 ```
 foreach example e:
   ./scallop_coordinate_ascent.pl e {e}_output/
-  ./scallop_generate_config_from_working_dir.pl {e}_output/ configs/{e}.config
+  ./stringtie_create_config.py -out_fname configs/{e}.config {e}_output/ 
 
 foreach example e:
   foreach example p: #use the parameter this time
-    ./scallop_run_with_config.pl e configs/{p}.config out/{e}_c{p}
+    ./scallop_run_with_config.pl out/ e configs/{p}.config
 
 ./advisor_subset.pl out/ temp.lp 10
 ```

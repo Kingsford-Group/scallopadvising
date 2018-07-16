@@ -165,12 +165,12 @@ sub run_with_one_change{
       }
 
       # Compute AUC
-      system("gffcompare_highprecision/gffcompare -r data/GRCh38_chr.gtf -o $working_dir/$out_fname $working_dir/$out_fname.gtf");
+      system("gffcompare -r data/GRCh38_chr.gtf -o $working_dir/$out_fname $working_dir/$out_fname.gtf");
       if((-e "$working_dir/$out_fname.$out_fname.gtf.tmap")){
         # $num_transcripts should match the number of transcripts in the reference
         my $num_transcripts = 197649;
 
-        $auc = `/mnt/disk44/user/mingfus/data/repositories/rnaseqtools/gtfcuff/gtfcuff auc $working_dir/$out_fname.$out_fname.gtf.tmap $num_transcripts | tee $working_dir/$out_fname.auc`;
+        $auc = `gtfcuff auc $working_dir/$out_fname.$out_fname.gtf.tmap $num_transcripts | tee $working_dir/$out_fname.auc`;
         system("rm $working_dir/$out_fname.$out_fname.gtf.refmap $working_dir/$out_fname.loci $working_dir/$out_fname.annotated.gtf $working_dir/$out_fname.tracking");
         system("gzip $working_dir/$out_fname.gtf");
       }else{
