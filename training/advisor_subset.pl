@@ -2,15 +2,22 @@
 use strict;
 use warnings;
 
-my $folder = shift;
-my $file = shift;
-my @coef = split(/,/,shift);
-my $num_params = shift;
+# this script takes in a folder containing a set of files containing the AUC information for a set of training examples
+# each assembles using a collection of trained parameter choice vectors. These files should have the naming convetion
+# <example>_c<configuration>.auc
+# An ILP is then generated to solve the advisor subset problem, this ILP is saved to a file, CPLEX is called and the results
+# are postprocessed and the final subset is printed to STDOUT
 
+my $folder = shift;     #folder continina the AUC files
+my $file = shift;       #location/name of the temporaray LP file read and write
+my $num_params = shift; #goal advisor set size
+
+# running ILP strings
 my $objective = "\t";
 my $sum_1_constraints = "";
 my $param_exists_constraints = "";
 
+# book keeping
 my $experements = -1;
 my @experement_names;
 my %parameters;
@@ -18,11 +25,10 @@ my @parameters_inverse;
 
 foreach my $exp(`ls $folder/*auc | sed "s/.*\\/\\(.*\\)_c.*/\\1/" | sort -u`){
   chomp $exp;
-  next if `grep auc $folder/$exp*auc | wc -l` < 31;
   print STDERR "Reading $exp\r";
   push(@experement_names,$exp);
   $experements++;
-  my @logs = `ls $folder/$exp*log`;
+  my @logs = `ls $folder/$exp*auc`;
   chomp @logs;
 
   my $first = 1;
@@ -30,35 +36,19 @@ foreach my $exp(`ls $folder/*auc | sed "s/.*\\/\\(.*\\)_c.*/\\1/" | sort -u`){
 
   foreach my $log(@logs){
     $log =~ s/.*${exp}_(c.*)/$1/;
-    #print STDERR "Processing $log\r";
+    next if !(-e "$folder/${exp}_$log");
 
-    my $auc_fname = $log;
-    $auc_fname =~ s/.log/.auc/;
-    next if !(-e "$folder/${exp}_$auc_fname");
-
-    my $auc = `grep auc $folder/${exp}_$auc_fname`;
-    my $sensitivity = $auc;
+    my $auc = `grep auc $folder/${exp}_$log`;
     next if $auc eq "";
 
-    $sensitivity =~ s/.*sensitivity = ([0-9\.e]*).*/$1/;
     $auc =~ s/.*auc = //;
     chomp $auc;
-    #print "${exp}_$auc_fname: $auc\n";
 
     if(!exists($parameters{$log})){
       $parameters{$log} = scalar(keys %parameters);
       $parameters_inverse[$parameters{$log}] = $log;
     }
-    my $value = 0;
-    my @mappings = split(/\s+/,`grep Mapped $folder/${exp}_$log`);
-    ###next if scalar(@mappings) < 12;
-    #    0      1         2              3              4                  5    6                7                8              9               10     11      12
-    # Mapped counts:  327745278       78896749        0.240726        1025424 0.00312872      128901319       391580670       170714778       20397.9 125770  34733
-    ###$value += 1.0 * $coef[0] * $mappings[2] / (1.0 * $mappings[8] ) if $mappings[8] != 0;
-    ###$value += 1.0 * $coef[1] * $mappings[7] / (1.0 * $mappings[9] ) if $mappings[9] != 0;
-    ###$value += 1.0 * $coef[2] * $mappings[10]/ (1.0 * $mappings[12]) if $mappings[12]!= 0;
-    ###$value += 1.0 * $coef[3] * $mappings[11]/ (1.0 * $mappings[12]) if $mappings[12]!= 0;
-    $value += 1.0 * $coef[4] * $auc if scalar(@coef)>=5;
+    my $value = $auc;
 
     if($value < 0){
       $value *= -1.0;
@@ -79,6 +69,7 @@ foreach my $exp(`ls $folder/*auc | sed "s/.*\\/\\(.*\\)_c.*/\\1/" | sort -u`){
   $sum_1_constraints .= " = 1\n";
 }
 
+# output LP to file
 open FILE, ">$file" or die("$file: $!\n");
 print FILE "Maximize\n$objective\n";
 print FILE "Subject to:\n";
@@ -100,7 +91,7 @@ for(my $i=0; $i<scalar(keys %parameters); $i++){
 print FILE "END\n";
 close FILE;
 
-
+# run CPLEX, post process results and print set
 my @results = `cplex -c "read $file" "opt" "display solution variables p*"`;
 foreach my $line(@results){
   chomp $line;

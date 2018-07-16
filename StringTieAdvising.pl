@@ -42,7 +42,7 @@ foreach my $config_file (@configs){
 
   my $temp_file_prefix = "temp" . (rndStr 8, 'a'..'z', 0..9);
 
-  my $command = "$stringtie_path -i $input_bam ";
+  my $command = "$stringtie_path -i $input_bam -c 0.001 ";
   foreach my $l(`cat $config_file`){
     chomp $l;
     my @spl = split(/\s+/,$l);
