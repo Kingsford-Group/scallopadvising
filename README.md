@@ -27,6 +27,7 @@ An example of the full command is
 ./ScallopAdvising.pl --working_dir temp/ --input_bam in.bam --output_gtf out.gtf --reference ref.gtf default.config config1.config
 ```
 
+optionally the `--log_file` parameter can be used to output a TSV file that lists the AUC for each of the input configurations. 
 
 ## config files
 

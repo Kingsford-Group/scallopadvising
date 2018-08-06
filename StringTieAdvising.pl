@@ -15,6 +15,7 @@ my $working_dir = ".";
 my $input_bam = "";
 my $output_gtf = "";
 my $reference = "";
+my $logfname = "";
 
 GetOptions ("stringtie_path=s"    => \$scallop_path,
             "gffcompare_path=s" => \$gffcompare_path,
@@ -22,7 +23,8 @@ GetOptions ("stringtie_path=s"    => \$scallop_path,
             "working_dir=s"     => \$working_dir,
             "input_bam=s"       => \$input_bam,
             "output_gtf=s"      => \$output_gtf,
-            "reference=s"       => \$reference)
+            "reference=s"       => \$reference,
+            "log_file=s"        => \$logfname)
  or die("Error in command line arguments\n");
 
 my @configs;
@@ -37,6 +39,8 @@ foreach my $c(@ARGV){
 my $best_auc = -1;
 
 my $reference_length = `grep -c "\ttranscript\t" $reference`;
+
+open LOGFILE,">$logfname" if $logfname ne "";
 
 foreach my $config_file (@configs){
 
@@ -60,6 +64,8 @@ foreach my $config_file (@configs){
       my $auc = `$gtfcuff_path auc $working_dir/$temp_file_prefix.$temp_file_prefix.gtf.tmap $reference_length`;
       die("AUC command failed on $config_file\n") if(!($auc =~ /.*auc =/));
       $auc =~ s/.*auc = //;
+      chomp $auc;
+      print LOGFILE "$config_file\t$auc\n" if $logfname ne "";
       if($best_auc < $auc){
         system("mv $working_dir/$temp_file_prefix.gtf $output_gtf.temp");
         $best_auc = $auc;
@@ -72,5 +78,8 @@ foreach my $config_file (@configs){
     die("Scallop command failed on configuration file $config_file\n");
   }
 }
+
+print "Best AUC found: $best_auc\n";
+close LOGFILE if $logfname ne "";
 
 system("mv $output_gtf.temp $output_gtf");
