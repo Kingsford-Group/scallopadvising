@@ -56,9 +56,9 @@ uniquely_mapped_only                0
 use_second_alignment                0
 ```
 
-#Data
+# Paper Results
 
-Information about how to obtain the data used for validating parameter advising for transcript assembly can be found in the `data/` directory. 
+Information about how to obtain the data used for validating parameter advising for transcript assembly can be found in the `publication_results/` directory. 
 There you will find links and scripts to help retreive the necesary input to recreate the results found in the manuscript. 
 
 #Training
