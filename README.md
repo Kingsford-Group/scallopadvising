@@ -55,3 +55,12 @@ min_transcript_length_increase      50
 uniquely_mapped_only                0
 use_second_alignment                0
 ```
+
+#Data
+
+Information about how to obtain the data used for validating parameter advising for transcript assembly can be found in the `data/` directory. 
+There you will find links and scripts to help retreive the necesary input to recreate the results found in the manuscript. 
+
+#Training
+
+The information found in the `training/` folder can be used to retrain either of the advisor set for a new set of data (though not neccesary).
