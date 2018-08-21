@@ -4,7 +4,7 @@ use warnings;
 use Getopt::Long;
 
 srand(time());
-sub rndStr{ join'', @_[ map{ rand @_ } 1 .. shift ] }
+sub rndStr{ join '', @_[ map{ rand @_ } 1 .. shift ] }
 
 
 my $stringtie_path = "stringtie";
@@ -16,6 +16,7 @@ my $input_bam = "";
 my $output_gtf = "";
 my $reference = "";
 my $logfname = "";
+my $library_type = "";
 
 GetOptions ("stringtie_path=s"    => \$scallop_path,
             "gffcompare_path=s" => \$gffcompare_path,
@@ -24,7 +25,8 @@ GetOptions ("stringtie_path=s"    => \$scallop_path,
             "input_bam=s"       => \$input_bam,
             "output_gtf=s"      => \$output_gtf,
             "reference=s"       => \$reference,
-            "log_file=s"        => \$logfname)
+            "log_file=s"        => \$logfname
+            "library_type=s"    => \$library_type)
  or die("Error in command line arguments\n");
 
 my @configs;
@@ -47,6 +49,13 @@ foreach my $config_file (@configs){
   my $temp_file_prefix = "temp" . (rndStr 8, 'a'..'z', 0..9);
 
   my $command = "$stringtie_path -i $input_bam -c 0.001 ";
+  
+  if($library_type eq "first"){
+    $command .= " --rf ";
+  }elsif($library_type eq "second"){
+    $command .= " --fr ";
+  }
+
   foreach my $l(`cat $config_file`){
     chomp $l;
     my @spl = split(/\s+/,$l);

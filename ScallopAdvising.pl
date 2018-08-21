@@ -4,7 +4,7 @@ use warnings;
 use Getopt::Long;
 
 srand(time());
-sub rndStr{ join'', @_[ map{ rand @_ } 1 .. shift ] }
+sub rndStr{ join '', @_[ map{ rand @_ } 1 .. shift ] }
 
 
 my $scallop_path = "scallop";
@@ -16,6 +16,7 @@ my $input_bam = "";
 my $output_gtf = "";
 my $reference = "";
 my $logfname = "";
+my $library_type = "";
 
 GetOptions ("scallop_path=s"    => \$scallop_path,
             "gffcompare_path=s" => \$gffcompare_path,
@@ -24,7 +25,8 @@ GetOptions ("scallop_path=s"    => \$scallop_path,
             "input_bam=s"       => \$input_bam,
             "output_gtf=s"      => \$output_gtf,
             "reference=s"       => \$reference,
-            "log_file=s"        => \$logfname)
+            "log_file=s"        => \$logfname,
+            "library_type=s"    => \$library_type)
  or die("Error in command line arguments\n");
 
 my @configs;
@@ -47,6 +49,7 @@ foreach my $config_file (@configs){
   my $temp_file_prefix = "temp" . (rndStr 8, 'a'..'z', 0..9);
 
   my $command = "$scallop_path -i $input_bam --verbose 0 --min_transcript_coverage 0";
+  $command .= " --library_type $library_type" if($library_type ne "");
   foreach my $l(`cat $config_file`){
     chomp $l;
     my @spl = split(/\s+/,$l);
