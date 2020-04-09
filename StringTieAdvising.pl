@@ -18,14 +18,14 @@ my $reference = "";
 my $logfname = "";
 my $library_type = "";
 
-GetOptions ("stringtie_path=s"    => \$scallop_path,
+GetOptions ("stringtie_path=s"    => \$stringtie_path,
             "gffcompare_path=s" => \$gffcompare_path,
             "gtfcuff_path=s"    => \$gtfcuff_path,
             "working_dir=s"     => \$working_dir,
             "input_bam=s"       => \$input_bam,
             "output_gtf=s"      => \$output_gtf,
             "reference=s"       => \$reference,
-            "log_file=s"        => \$logfname
+            "log_file=s"        => \$logfname,
             "library_type=s"    => \$library_type)
  or die("Error in command line arguments\n");
 
